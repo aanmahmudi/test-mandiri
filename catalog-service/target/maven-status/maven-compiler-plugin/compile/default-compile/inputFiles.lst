@@ -1,0 +1,12 @@
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\api\controller\BookController.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\api\dto\AdjustStockRequest.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\api\dto\BookResponse.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\api\dto\CreateBookRequest.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\CatalogServiceApplication.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\common\ApiErrorResponse.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\common\BadRequestException.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\common\NotFoundException.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\common\RestExceptionHandler.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\domain\entity\Book.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\domain\repository\BookRepository.java
+D:\test-mandiri\catalog-service\src\main\java\com\mandiri\catalog\domain\service\BookService.java
