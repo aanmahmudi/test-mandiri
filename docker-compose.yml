@@ -16,9 +16,9 @@ services:
       context: ./catalog-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mandiri
-      SPRING_DATASOURCE_USERNAME: mandiri
-      SPRING_DATASOURCE_PASSWORD: mandiri
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/db-catalog
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
       - postgres
     ports:
@@ -29,9 +29,9 @@ services:
       context: ./lending-service
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mandiri
-      SPRING_DATASOURCE_USERNAME: mandiri
-      SPRING_DATASOURCE_PASSWORD: mandiri
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/db-lending
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
       CATALOG_BASE_URL: http://catalog-service:8081
     depends_on:
       - postgres
