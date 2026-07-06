@@ -30,7 +30,7 @@ public class MemberService {
                 .email(request.getEmail())
                 .build();
 
-        Member saved = memberRepository.save(member);
+        Member saved = memberRepository.saveAndFlush(member);
         return toResponse(saved);
     }
 

@@ -49,7 +49,7 @@ public class LoanService {
                 .dueDate(LocalDate.now().plusDays(days))
                 .build();
 
-        Loan saved = loanRepository.save(loan);
+        Loan saved = loanRepository.saveAndFlush(loan);
         return toResponse(saved, true);
     }
 
@@ -82,7 +82,7 @@ public class LoanService {
         }
 
         loan.markReturned(Instant.now());
-        Loan saved = loanRepository.save(loan);
+        Loan saved = loanRepository.saveAndFlush(loan);
         catalogClient.release(saved.getBookId(), 1);
         return toResponse(saved, true);
     }

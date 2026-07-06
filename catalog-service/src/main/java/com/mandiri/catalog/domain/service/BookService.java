@@ -36,7 +36,7 @@ public class BookService {
                 .stockAvailable(request.getStockTotal())
                 .build();
 
-        Book saved = bookRepository.save(book);
+        Book saved = bookRepository.saveAndFlush(book);
         return toResponse(saved);
     }
 
@@ -57,14 +57,14 @@ public class BookService {
     public BookResponse reserve(UUID id, int quantity) {
         Book book = bookRepository.findByIdForUpdate(id).orElseThrow(() -> new NotFoundException("book not found"));
         book.reserve(quantity);
-        return toResponse(bookRepository.save(book));
+        return toResponse(bookRepository.saveAndFlush(book));
     }
 
     @Transactional
     public BookResponse release(UUID id, int quantity) {
         Book book = bookRepository.findByIdForUpdate(id).orElseThrow(() -> new NotFoundException("book not found"));
         book.release(quantity);
-        return toResponse(bookRepository.save(book));
+        return toResponse(bookRepository.saveAndFlush(book));
     }
 
     private BookResponse toResponse(Book book) {
