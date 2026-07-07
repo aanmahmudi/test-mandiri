@@ -13,7 +13,9 @@ import com.mandiri.lending.integration.catalog.CatalogClient;
 import com.mandiri.lending.integration.catalog.dto.CatalogBookResponse;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,14 +62,25 @@ public class LoanService {
     }
 
     @Transactional(readOnly = true)
-    public List<LoanResponse> list(UUID memberId, LoanStatus status) {
+    public List<LoanResponse> list(UUID memberId, LoanStatus status, boolean includeBook) {
         List<Loan> loans = status == null
                 ? loanRepository.findByMember_Id(memberId)
                 : loanRepository.findByMember_IdAndStatus(memberId, status);
 
-        return loans.stream()
+        List<Loan> sortedLoans = loans.stream()
                 .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .map(l -> toResponse(l, false))
+                .toList();
+
+        Map<UUID, BookSnapshotResponse> bookCache = includeBook ? new HashMap<>() : Map.of();
+        if (includeBook) {
+            sortedLoans.stream()
+                    .map(Loan::getBookId)
+                    .distinct()
+                    .forEach(bookId -> bookCache.put(bookId, fetchBookSnapshot(bookId)));
+        }
+
+        return sortedLoans.stream()
+                .map(l -> toResponse(l, includeBook, bookCache))
                 .toList();
     }
 
@@ -88,19 +101,13 @@ public class LoanService {
     }
 
     private LoanResponse toResponse(Loan loan, boolean includeBook) {
+        return toResponse(loan, includeBook, null);
+    }
+
+    private LoanResponse toResponse(Loan loan, boolean includeBook, Map<UUID, BookSnapshotResponse> cachedBooks) {
         BookSnapshotResponse book = null;
         if (includeBook) {
-            try {
-                CatalogBookResponse b = catalogClient.getBook(loan.getBookId());
-                book = BookSnapshotResponse.builder()
-                        .id(b.getId())
-                        .isbn(b.getIsbn())
-                        .title(b.getTitle())
-                        .author(b.getAuthor())
-                        .build();
-            } catch (RuntimeException ignored) {
-                book = null;
-            }
+            book = cachedBooks == null ? fetchBookSnapshot(loan.getBookId()) : cachedBooks.get(loan.getBookId());
         }
 
         return LoanResponse.builder()
@@ -114,5 +121,19 @@ public class LoanService {
                 .updatedAt(loan.getUpdatedAt())
                 .book(book)
                 .build();
+    }
+
+    private BookSnapshotResponse fetchBookSnapshot(UUID bookId) {
+        try {
+            CatalogBookResponse b = catalogClient.getBook(bookId);
+            return BookSnapshotResponse.builder()
+                    .id(b.getId())
+                    .isbn(b.getIsbn())
+                    .title(b.getTitle())
+                    .author(b.getAuthor())
+                    .build();
+        } catch (RuntimeException ignored) {
+            return null;
+        }
     }
 }

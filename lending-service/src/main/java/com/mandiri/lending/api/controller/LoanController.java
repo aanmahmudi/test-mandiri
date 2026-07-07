@@ -45,9 +45,10 @@ public class LoanController {
     @GetMapping
     public List<LoanResponse> list(
             @RequestParam("member_id") UUID memberId,
-            @RequestParam(value = "status", required = false) String status
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "include_book", required = false, defaultValue = "false") boolean includeBook
     ) {
         LoanStatus parsedStatus = status == null ? null : LoanStatus.valueOf(status.toUpperCase());
-        return loanService.list(memberId, parsedStatus);
+        return loanService.list(memberId, parsedStatus, includeBook);
     }
 }
